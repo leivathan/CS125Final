@@ -29,6 +29,7 @@ public final class MainActivity extends AppCompatActivity {
 
     private Integer livesStart = 3;
     private Integer scoreStart = 0;
+    private String difficulty = "";
 
     /**
      * Run when this activity comes to the foreground.
@@ -46,14 +47,21 @@ public final class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         updateLives();
+        updateScore();
 
         final Button restartGame = findViewById(R.id.button_restart);
         restartGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
                 Log.d(TAG, "Game restarted");
+
                 livesStart = 3;
                 updateLives();
+
+                difficulty = "";
+                scoreStart = 0;
+                updateScore();
+
                 startAPICall();
             }
         });
@@ -72,6 +80,8 @@ public final class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(final View v) {
                 Log.d(TAG, "Answer choice B picked");
+                difficulty = "hard";
+                updateScore();
             }
         });
 
@@ -139,8 +149,17 @@ public final class MainActivity extends AppCompatActivity {
         livesStart--;
     }
 
-//    void updateScore() {
-//        TextView scores = findViewById(R.id.scores);
-//        scores.setText();
-//    }
+    void updateScore() {
+        TextView scores = findViewById(R.id.scores);
+
+        if (difficulty.equals("easy")) {
+            scoreStart += 100;
+        } else if (difficulty.equals("medium")) {
+            scoreStart += 200;
+        } else if (difficulty.equals("hard")) {
+            scoreStart += 300;
+        }
+        scores.setText("Score: " + scoreStart.toString());
+        scores.setVisibility(View.VISIBLE);
+    }
 }

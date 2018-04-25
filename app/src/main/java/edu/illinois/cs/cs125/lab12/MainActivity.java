@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -26,6 +27,8 @@ public final class MainActivity extends AppCompatActivity {
     /** Request queue for our API requests. */
     private static RequestQueue requestQueue;
 
+    private Integer livesStart = 3;
+
     /**
      * Run when this activity comes to the foreground.
      *
@@ -41,11 +44,14 @@ public final class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
+        updateLives();
+
         final Button restartGame = findViewById(R.id.button_restart);
         restartGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
                 Log.d(TAG, "Game restarted");
+                startAPICall();
             }
         });
 
@@ -54,6 +60,7 @@ public final class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(final View v) {
                 Log.d(TAG, "Answer choice A picked");
+                updateLives();
             }
         });
 
@@ -97,9 +104,7 @@ public final class MainActivity extends AppCompatActivity {
         try {
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                     Request.Method.GET,
-                    "http://api.openweathermap.org/data/2.5/weather?zip=61820,us&appid="
-                            + BuildConfig.API_KEY,
-                    null,
+                    "https://opentdb.com/api.php?amount=1&type=multiple", null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(final JSONObject response) {
@@ -117,5 +122,17 @@ public final class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Set number of lives left.
+     */
+    void updateLives() {
+        if (livesStart >= 0) {
+            TextView lives = findViewById(R.id.lives);
+            lives.setText("Lives: " + livesStart.toString());
+            lives.setVisibility(View.VISIBLE);
+        }
+        livesStart--;
     }
 }

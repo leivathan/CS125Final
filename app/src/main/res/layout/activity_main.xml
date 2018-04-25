@@ -18,27 +18,27 @@
             android:id="@+id/button_restart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Restart" />
+            android:text="@string/restart" />
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/scores"
             android:layout_width="131dp"
             android:layout_height="wrap_content"
-            android:text="Score: " />
+            android:text="@string/score" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/lives"
             android:layout_width="102dp"
             android:layout_height="wrap_content"
-            android:text="Lives:" />
+            android:text="@string/lives" />
     </TableRow>
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="match_parent"
-        android:layout_height="330dp"
+        android:layout_height="456dp"
         android:layout_weight="1"
-        android:text="Question:" />
+        android:text="@string/question" />
 
     <TableRow
         android:layout_width="match_parent"

@@ -28,6 +28,7 @@ public final class MainActivity extends AppCompatActivity {
     private static RequestQueue requestQueue;
 
     private Integer livesStart = 3;
+    private Integer scoreStart = 0;
 
     /**
      * Run when this activity comes to the foreground.
@@ -51,6 +52,8 @@ public final class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(final View v) {
                 Log.d(TAG, "Game restarted");
+                livesStart = 3;
+                updateLives();
                 startAPICall();
             }
         });
@@ -135,4 +138,9 @@ public final class MainActivity extends AppCompatActivity {
         }
         livesStart--;
     }
+
+//    void updateScore() {
+//        TextView scores = findViewById(R.id.scores);
+//        scores.setText();
+//    }
 }

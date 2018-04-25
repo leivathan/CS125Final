@@ -21,7 +21,7 @@ import org.json.JSONObject;
  */
 public final class MainActivity extends AppCompatActivity {
     /** Default logging tag for messages from the main activity. */
-    private static final String TAG = "Lab12:Main";
+    private static final String TAG = "CS125FinalProject:Main";
 
     /** Request queue for our API requests. */
     private static RequestQueue requestQueue;
@@ -41,13 +41,43 @@ public final class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        final Button getWeather = findViewById(R.id.getWeather);
-
-        getWeather.setOnClickListener(new View.OnClickListener() {
+        final Button restartGame = findViewById(R.id.button_restart);
+        restartGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                Log.d(TAG, "Update weather button clicked");
-                startAPICall();
+                Log.d(TAG, "Game restarted");
+            }
+        });
+
+        final Button chooseA = findViewById(R.id.button_A);
+        chooseA.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                Log.d(TAG, "Answer choice A picked");
+            }
+        });
+
+        final Button chooseB = findViewById(R.id.button_B);
+        chooseB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                Log.d(TAG, "Answer choice B picked");
+            }
+        });
+
+        final Button chooseC = findViewById(R.id.button_C);
+        chooseC.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                Log.d(TAG, "Answer choice C picked");
+            }
+        });
+
+        final Button chooseD = findViewById(R.id.button_D);
+        chooseD.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                Log.d(TAG, "Answer choice D picked");
             }
         });
     }
@@ -61,7 +91,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Make a call to the weather API.
+     * Make a call to the trivia API.
      */
     void startAPICall() {
         try {

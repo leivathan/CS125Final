@@ -2,6 +2,7 @@ package edu.illinois.cs.cs125.lab12;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.JsonReader;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -14,8 +15,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Main class for our UI design lab.
@@ -29,6 +34,12 @@ public final class MainActivity extends AppCompatActivity {
 
     private Integer livesStart = 3;
     private Integer scoreStart = 0;
+    private String difficulty = "";
+    private String answerChoice = "";
+    private String a_choice = "";
+    private String b_choice = "";
+    private String c_choice = "";
+    private String d_choice = "";
 
     /**
      * Run when this activity comes to the foreground.
@@ -46,15 +57,13 @@ public final class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         updateLives();
+        updateScore();
 
         final Button restartGame = findViewById(R.id.button_restart);
         restartGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                Log.d(TAG, "Game restarted");
-                livesStart = 3;
-                updateLives();
-                startAPICall();
+                restartGame();
             }
         });
 
@@ -63,7 +72,13 @@ public final class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(final View v) {
                 Log.d(TAG, "Answer choice A picked");
-                updateLives();
+                Log.d(TAG, "Difficulty: " + difficulty);
+                if (answerChoice.equals(a_choice)) {
+                    updateScore();
+                } else {
+                    updateLives();
+                }
+                startAPICall();
             }
         });
 
@@ -72,6 +87,12 @@ public final class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(final View v) {
                 Log.d(TAG, "Answer choice B picked");
+                if (answerChoice.equals(b_choice)) {
+                    updateScore();
+                } else {
+                    updateLives();
+                }
+                startAPICall();
             }
         });
 
@@ -80,6 +101,12 @@ public final class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(final View v) {
                 Log.d(TAG, "Answer choice C picked");
+                if (answerChoice.equals(c_choice)) {
+                    updateScore();
+                } else {
+                    updateLives();
+                }
+                startAPICall();
             }
         });
 
@@ -88,6 +115,12 @@ public final class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(final View v) {
                 Log.d(TAG, "Answer choice D picked");
+                if (answerChoice.equals(d_choice)) {
+                    updateScore();
+                } else {
+                    updateLives();
+                }
+                startAPICall();
             }
         });
     }
@@ -113,6 +146,7 @@ public final class MainActivity extends AppCompatActivity {
                         public void onResponse(final JSONObject response) {
                             try {
                                 Log.d(TAG, response.toString(2));
+                                setAnswerChoices(response);
                             } catch (JSONException ignored) { }
                         }
                     }, new Response.ErrorListener() {
@@ -131,16 +165,92 @@ public final class MainActivity extends AppCompatActivity {
      * Set number of lives left.
      */
     void updateLives() {
-        if (livesStart >= 0) {
+        if (livesStart > 0) {
             TextView lives = findViewById(R.id.lives);
             lives.setText("Lives: " + livesStart.toString());
             lives.setVisibility(View.VISIBLE);
+            livesStart--;
+        } else if (livesStart == 0) {
+            gameOver();
         }
-        livesStart--;
     }
 
-//    void updateScore() {
-//        TextView scores = findViewById(R.id.scores);
-//        scores.setText();
-//    }
+    /**
+     * Updates score.
+     */
+    void updateScore() {
+        TextView scores = findViewById(R.id.scores);
+
+        if (difficulty.equals("easy")) {
+            scoreStart += 100;
+        } else if (difficulty.equals("medium")) {
+            scoreStart += 200;
+        } else if (difficulty.equals("hard")) {
+            scoreStart += 300;
+        }
+        scores.setText("Score: " + scoreStart.toString());
+        scores.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Randomly assigns answer choices to buttons.
+     * @param jsonResult jsonResult from API call
+     * @throws JSONException exception
+     */
+    void setAnswerChoices(final JSONObject jsonResult) throws JSONException{
+        Log.d(TAG, "test");
+        JSONObject results = jsonResult.getJSONArray("results").getJSONObject(0);
+        Log.d(TAG, results.toString());
+        difficulty = results.getString("difficulty");
+        answerChoice = results.getString("correct_answer");
+        JSONArray incorrect_answers = results.getJSONArray("incorrect_answers");
+
+        TextView question = findViewById(R.id.question);
+        question.setText("Question: " + results.getString("question"));
+        question.setVisibility(View.VISIBLE);
+
+        Button chooseA = findViewById(R.id.button_A);
+        Button chooseB = findViewById(R.id.button_B);
+        Button chooseC = findViewById(R.id.button_C);
+        Button chooseD = findViewById(R.id.button_D);
+
+        ArrayList<String> choices =  new ArrayList<>();
+        choices.add(answerChoice);
+        choices.add(incorrect_answers.getString(0));
+        choices.add(incorrect_answers.getString(1));
+        choices.add(incorrect_answers.getString(2));
+        Collections.shuffle(choices);
+
+        chooseA.setText(choices.get(0));
+        a_choice = choices.get(0);
+        chooseB.setText(choices.get(1));
+        b_choice = choices.get(1);
+        chooseC.setText(choices.get(2));
+        c_choice = choices.get(2);
+        chooseD.setText(choices.get(3));
+        d_choice = choices.get(3);
+    }
+
+    /**
+     * Restarts game.
+     */
+    void restartGame() {
+        Log.d(TAG, "Game restarted");
+
+        livesStart = 3;
+        updateLives();
+
+        difficulty = "";
+        scoreStart = 0;
+        updateScore();
+
+        startAPICall();
+    }
+
+    /**
+     * Screen popup when out of lives showing score, high score, and asks to play again.
+     */
+    void gameOver() {
+        restartGame();
+    }
 }
